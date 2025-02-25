@@ -9,7 +9,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 names = ["a", "b", "c", "d"]
 
-def add_entitlements(driver):
+def add_entitlements(driver, wait):
     wait = WebDriverWait(driver, 10)
     driver.find_element(By.XPATH, "//span[text()='Leave']").click()
     time.sleep(2)
@@ -17,7 +17,12 @@ def add_entitlements(driver):
     time.sleep(2)
     driver.find_element(By.LINK_TEXT, "Add Entitlements").click()
     time.sleep(3)
+    # to make the code work with the below function we need to call this function
+    emp_name = add_entitlements_name(driver,wait)
+    return emp_name
     # this css is shorter version of the above. "> means the div is directly under the one before before and if no > then it could be anywhere under the div:'div:nth-child(2) div:nth-child(2) > div > div > input'
+
+def add_entitlements_name(driver, wait):
     ctl_name = driver.find_element(By.CSS_SELECTOR, "form > div:nth-child(2) > div > div > div > div:nth-child(2) > div > div > input")
     ctl_name.click()
     time.sleep(2)
@@ -26,6 +31,8 @@ def add_entitlements(driver):
         time.sleep(2)
         driver.save_screenshot("list.png")
         lst = driver.find_elements(By.CSS_SELECTOR, "div.oxd-autocomplete-dropdown > div")
+        print(len(lst))
+        display_list_items(driver, lst)
         if len(lst) > 0:
             ctl_name.send_keys(Keys.ARROW_DOWN + Keys.RETURN)
             time.sleep(4)
@@ -44,6 +51,11 @@ def add_entitlements(driver):
             driver.save_screenshot("entitlements.png")
             time.sleep(4)
             return emp_name
+
+def display_list_items(driver, lst):
+    for i in range(0, len(lst)):
+        print(f'lst[{i}].text {lst[i].text}')
+
 
 
 # def add_entitlements(driver):
